@@ -52,7 +52,7 @@
   :group 'electricity)
 
 (defvar electric-spacing-rules
-  '((?= . electric-spacing-self-insert-command)
+  '((?= . electric-spacing-=)
     (?< . electric-spacing-<)
     (?> . electric-spacing->)
     (?% . electric-spacing-%)
@@ -169,6 +169,17 @@ so let's not get too insert-happy."
 
 
 ;;; Fine Tunings
+
+(defun electric-spacing-= ()
+  (cond
+   ((derived-mode-p 'python-mode)
+    ;; `=` for keyword args shouldn't be spaced. Since tuples can't contain
+    ;; `=` we can assume this is a kwarg if we are inside ( ).
+    (cond ((eq (electric-spacing-enclosing-paren) ?\()
+           (insert "="))
+          (t (electric-spacing-insert "="))))
+
+   (t (electric-spacing-insert "="))))
 
 (defun electric-spacing-< ()
   "See `electric-spacing-insert'."
