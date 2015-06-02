@@ -1,0 +1,56 @@
+###
+### Notes
+###
+### The travis web interface may choke silently and fail to
+### update when there are issues with the .travis.yml file.
+###
+### The "travis-lint" command-line tool does not catch all
+### errors which may lead to silent failure.
+###
+### Shell-style comments in this file must have "#" as the
+### *first* character of the line.
+###
+
+# travis-lint no longer permits this value
+language: emacs-lisp
+
+env:
+  matrix:
+    - EMACS=emacs23
+    - EMACS=emacs24
+    - EMACS=emacs-snapshot
+
+
+### allowing build failures
+matrix:
+  allow_failures:
+    - env: EMACS=emacs-snapshot
+
+
+before_install:
+  - git submodule --quiet update --init --recursive
+
+install:
+  - if [ "$EMACS" = 'emacs23' ]; then
+        sudo apt-get -qq update &&
+        sudo apt-get -qq -f install &&
+        sudo apt-get -qq install emacs23-gtk emacs23-el;
+    fi
+  - if [ "$EMACS" = 'emacs24' ]; then
+        sudo apt-get -qq update &&
+        sudo apt-get -qq -f install &&
+        sudo apt-get -qq install emacs24 emacs24-el;
+    fi
+  - if [ "$EMACS" = 'emacs-snapshot' ]; then
+        sudo add-apt-repository -y ppa:ubuntu-elisp/ppa &&
+        sudo apt-get -qq update &&
+        sudo apt-get -qq -f install &&
+        sudo apt-get -qq install emacs-snapshot &&
+        sudo apt-get -qq install emacs-snapshot-el;
+    fi
+
+script:
+  $EMACS --version && make build EMACS="$EMACS"
+
+notifications:
+  email: false
