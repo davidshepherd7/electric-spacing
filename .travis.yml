@@ -16,7 +16,6 @@ language: emacs-lisp
 
 env:
   matrix:
-    - EMACS=emacs23
     - EMACS=emacs24
     - EMACS=emacs-snapshot
 
@@ -31,11 +30,6 @@ before_install:
   - git submodule --quiet update --init --recursive
 
 install:
-  - if [ "$EMACS" = 'emacs23' ]; then
-        sudo apt-get -qq update &&
-        sudo apt-get -qq -f install &&
-        sudo apt-get -qq install emacs23-gtk emacs23-el;
-    fi
   - if [ "$EMACS" = 'emacs24' ]; then
         sudo apt-get -qq update &&
         sudo apt-get -qq -f install &&
